@@ -8,7 +8,7 @@ cask "clipshelf" do
   homepage "https://github.com/zxdposter/ClipShelf"
 
   depends_on arch: :arm64
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "ClipShelf.app"
 end
