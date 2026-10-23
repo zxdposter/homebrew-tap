@@ -1,6 +1,6 @@
 cask "clipshelf" do
-  version "0.9.1"
-  sha256 "a34ed7de2c2c609f425f3c83678228abbee913d26c72316d8ec5f0ee112e13e2"
+  version "0.9.2"
+  sha256 "3674cce3ee69035b7056ea2771e14c566f3c86017ac627b4f1bb45274cb75af2"
 
   url "https://github.com/zxdposter/ClipShelf/releases/download/v#{version}/ClipShelf-#{version}-macOS-arm64.dmg"
   name "ClipShelf"
