@@ -1,9 +1,9 @@
 cask "clipshelf" do
   arch arm: "arm64", intel: "x86_64"
 
-  version "0.13.0"
-  sha256 arm:   "46832dd34c4ec32d4e173f00b04f5a3860c80681b2f2e3946329799893ade5ad",
-         intel: "5822a341c578c3a937646290a622d2596aa3e8a3f5ed2bf953d266ef34f47719"
+  version "0.13.1"
+  sha256 arm:   "9d79e777668e8cf85fc2591441349ed6ceb850d28525278c1acb3f8b57a5236a",
+         intel: "3315b488f5128daa222844b6c43b33d395ea76a0e9acbb0c43d3b8684353db82"
 
   url "https://github.com/zxdposter/ClipShelf/releases/download/v#{version}/ClipShelf-#{version}-macOS-#{arch}.dmg"
   name "ClipShelf"
