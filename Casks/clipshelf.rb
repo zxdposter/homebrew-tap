@@ -15,19 +15,4 @@ cask "clipshelf" do
   app "ClipShelf.app"
   binary "#{appdir}/ClipShelf.app/Contents/MacOS/fcp", target: "fcp"
   binary "#{appdir}/ClipShelf.app/Contents/MacOS/cpx", target: "cpx"
-
-  # shortcut: use legacy postflight for keychain access until structured steps can read local signing identities.
-  postflight do
-    identities = system_command("/usr/bin/security", args: ["find-identity", "-v", "-p", "codesigning"]).stdout
-    identity = identities[/^\s*\d+\)\s+([0-9A-F]{40}) "ClipShelf Release Signing"$/, 1]
-    if identity
-      requirement = %(identifier "local.clipshelf.app" and certificate leaf = H"#{identity}")
-      system_command "/usr/bin/codesign",
-                     args: ["--force", "--sign", identity, "--timestamp=none",
-                            "--requirements", "=designated => #{requirement}", "#{appdir}/ClipShelf.app"]
-      system_command "/usr/bin/codesign",
-                     args: ["--verify", "--deep", "--strict", "--test-requirement", "=#{requirement}",
-                            "#{appdir}/ClipShelf.app"]
-    end
-  end
 end
