@@ -16,18 +16,18 @@ cask "clipshelf" do
   binary "#{appdir}/ClipShelf.app/Contents/MacOS/fcp", target: "fcp"
   binary "#{appdir}/ClipShelf.app/Contents/MacOS/cpx", target: "cpx"
 
-  postflight_steps do
-    run "/bin/bash", args: ["-c", <<~'SHELL', "clipshelf-local-signing", "{{appdir}}/ClipShelf.app"], print_stdout: true
-      set -euo pipefail
-      identity=$(/usr/bin/security find-identity -v -p codesigning | /usr/bin/awk '/"ClipShelf Release Signing"$/ { print $2; exit }')
-      if [[ -z "$identity" ]]; then
-        exit 0
-      fi
-      [[ "$identity" =~ ^[0-9A-F]{40}$ ]]
-      requirement="identifier \"local.clipshelf.app\" and certificate leaf = H\"${identity}\""
-      echo "Re-signing ClipShelf with local identity ${identity}"
-      /usr/bin/codesign --force --sign "$identity" --timestamp=none --requirements "=designated => ${requirement}" "$1"
-      /usr/bin/codesign --verify --deep --strict --test-requirement "=${requirement}" "$1"
-    SHELL
+  # shortcut: use legacy postflight for keychain access until structured steps can read local signing identities.
+  postflight do
+    identities = system_command("/usr/bin/security", args: ["find-identity", "-v", "-p", "codesigning"]).stdout
+    identity = identities[/^\s*\d+\)\s+([0-9A-F]{40}) "ClipShelf Release Signing"$/, 1]
+    if identity
+      requirement = %(identifier "local.clipshelf.app" and certificate leaf = H"#{identity}")
+      system_command "/usr/bin/codesign",
+                     args: ["--force", "--sign", identity, "--timestamp=none",
+                            "--requirements", "=designated => #{requirement}", "#{appdir}/ClipShelf.app"]
+      system_command "/usr/bin/codesign",
+                     args: ["--verify", "--deep", "--strict", "--test-requirement", "=#{requirement}",
+                            "#{appdir}/ClipShelf.app"]
+    end
   end
 end
